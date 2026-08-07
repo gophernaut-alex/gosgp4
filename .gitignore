@@ -1,0 +1,11 @@
+/reference/
+/reference2/
+/.idea/go.imports.xml
+/.idea/go-sgp4.iml
+/.idea/modules.xml
+/.idea/vcs.xml
+/.idea/workspace.xml
+/BENCHMARKS.md
+/bench_test.go
+/.claude/skills/sgp4-porting/SKILL.md
+/scripts/benchreport/main.go

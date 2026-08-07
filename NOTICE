@@ -1,0 +1,19 @@
+This package is a Go port of the SGP4/SDP4 analytical satellite propagator
+algorithm, originally described in:
+
+    Vallado, D., Crawford, P., Hujsak, R., Kelso, T.S., "Revisiting
+    Spacetrack Report #3," AIAA 2006-6753, presented at the AIAA/AAS
+    Astrodynamics Specialist Conference, August 2006.
+    https://celestrak.org/publications/AIAA/2006-6753/
+
+The port was written and verified against the C++ reference implementation
+distributed at https://github.com/CelesTrak/fundamentals-of-astrodynamics
+(`software/cpp/SGP4/SGP4/SGP4.cpp` + `SGP4.h`), David Vallado's canonical,
+continuously-maintained distribution of that algorithm.
+
+CelesTrak's own FAQ for the above paper states that this code and algorithm
+may be used "for any purpose — personal or commercial — as you wish,"
+conditioned on citing its source (see
+https://celestrak.org/publications/AIAA/2006-6753/faq.php). This notice is
+that citation. This package's own original Go source is separately licensed
+under the MIT license in LICENSE.
