@@ -1,52 +1,22 @@
 # gosgp4
 
-A Go port of the reference **SGP4/SDP4** analytical satellite propagator.
+A Go port of the reference **SGP4/SDP4** analytical satellite propagator —
+validated against 32,000+ real satellites and two independent
+implementations.
 
-## Provenance
+[![Go Reference](https://pkg.go.dev/badge/github.com/gophernaut-alex/gosgp4.svg)](https://pkg.go.dev/github.com/gophernaut-alex/gosgp4)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-This is a line-for-line port of the C++ reference implementation from
-[CelesTrak/fundamentals-of-astrodynamics](https://github.com/CelesTrak/fundamentals-of-astrodynamics)
-(`software/cpp/SGP4/SGP4/SGP4.cpp` + `SGP4.h`), itself the canonical
-distribution of David Vallado's algorithm described in:
+## Accuracy
 
-> Vallado, D., Crawford, P., Hujsak, R., Kelso, T.S., "Revisiting
-> Spacetrack Report #3," AIAA 2006-6753, presented at the AIAA/AAS
-> Astrodynamics Specialist Conference, August 2006.
-
-A copy of that reference source is vendored under `reference/vallado/` in
-this repository for side-by-side comparison during development; it is not
-part of the Go module itself.
-
-An independently-distributed, older Vallado release (`SGP4.cpp`/`SGP4.h`
-from the 2020-era SGP4DC orbit-determination package, vendored for
-comparison under `reference2/sgp4dc/`) was diffed against the above and
-found byte-identical in the core propagator (`sgp4init`, `sgp4`, and all
-deep-space routines) — corroborating that this algorithm has been the same,
-consistently-authored Vallado code for years.
-
-Every internal function here carries a doc comment pointing back to its
-originating C++ function name and line range, and every exported struct
-field mirrors the C++ variable name it replaces (capitalized) — the goal
-throughout was traceability against the original, not just a working
-result.
-
-The vector-math and orbital-element utilities in `vector.go`/`timeutil.go`
-(`RVToCOE`, `Angle`, `NewtonNu`, `JDay`, ...) aren't used by the propagator
-itself, but are included for parity with the reference's own public API
-surface.
-
-## License
-
-**MIT** (see `LICENSE`) for this package's own Go source. No copyleft
-obligations — you can use this in closed-source or commercial projects
-without having to open-source anything of your own.
-
-The underlying SGP4/SDP4 algorithm this package ports is David Vallado's;
-CelesTrak's own FAQ for the paper it's based on states the algorithm/code
-may be used "for any purpose — personal or commercial — as you wish,"
-conditioned on citing the source (see
-https://celestrak.org/publications/AIAA/2006-6753/faq.php). See `NOTICE`
-for that citation.
+Validated against all 32,220 real satellites in a live Space-Track catalog —
+193,257 propagations each, from epoch out to 7 days — this port matches the
+exact Vallado C++ source it was ported from to within nanometers in the
+typical case (floating-point noise, not a real difference), and stays at
+least 99.98% positionally accurate against a fully independent
+implementation (AGI's official Astro Standards SGP4 library) in every one of
+those cases, typically far tighter. See [`ACCURACY_REPORT.md`](ACCURACY_REPORT.md)
+for full methodology, per-satellite breakdowns, and known edge cases.
 
 ## Install
 
@@ -114,6 +84,52 @@ zero during the propagated window — see the note atop `regression_test.go`
 for how this was tracked down. If you don't have a specific reason to
 match AFSPC's legacy behavior, use `OpsModeImproved`.
 
+## Provenance
+
+This is a line-for-line port of the C++ reference implementation from
+[CelesTrak/fundamentals-of-astrodynamics](https://github.com/CelesTrak/fundamentals-of-astrodynamics)
+(`software/cpp/SGP4/SGP4/SGP4.cpp` + `SGP4.h`), itself the canonical
+distribution of David Vallado's algorithm described in:
+
+> Vallado, D., Crawford, P., Hujsak, R., Kelso, T.S., "Revisiting
+> Spacetrack Report #3," AIAA 2006-6753, presented at the AIAA/AAS
+> Astrodynamics Specialist Conference, August 2006.
+
+A copy of that reference source is vendored under `reference/vallado/` in
+this repository for side-by-side comparison during development; it is not
+part of the Go module itself.
+
+An independently-distributed, older Vallado release (`SGP4.cpp`/`SGP4.h`
+from the 2020-era SGP4DC orbit-determination package, vendored for
+comparison under `reference2/sgp4dc/`) was diffed against the above and
+found byte-identical in the core propagator (`sgp4init`, `sgp4`, and all
+deep-space routines) — corroborating that this algorithm has been the same,
+consistently-authored Vallado code for years.
+
+Every internal function here carries a doc comment pointing back to its
+originating C++ function name and line range, and every exported struct
+field mirrors the C++ variable name it replaces (capitalized) — the goal
+throughout was traceability against the original, not just a working
+result.
+
+The vector-math and orbital-element utilities in `vector.go`/`timeutil.go`
+(`RVToCOE`, `Angle`, `NewtonNu`, `JDay`, ...) aren't used by the propagator
+itself, but are included for parity with the reference's own public API
+surface.
+
+## License
+
+**MIT** (see `LICENSE`) for this package's own Go source. No copyleft
+obligations — you can use this in closed-source or commercial projects
+without having to open-source anything of your own.
+
+The underlying SGP4/SDP4 algorithm this package ports is David Vallado's;
+CelesTrak's own FAQ for the paper it's based on states the algorithm/code
+may be used "for any purpose — personal or commercial — as you wish,"
+conditioned on citing the source (see
+https://celestrak.org/publications/AIAA/2006-6753/faq.php). See `NOTICE`
+for that citation.
+
 ## Architecture
 
 Each file maps to specific function(s) in the C++ reference
@@ -177,3 +193,7 @@ go test ./...
   output from an independent port of the same reference algorithm.
   `testdata/testsgp4.out` (Matlab-derived) is also included for anyone who
   wants to cross-check by hand.
+- **Accuracy validation** (`accuracytest/`, separate module) propagates all
+  32,220 satellites in a live Space-Track catalog against two independent
+  oracles — see the [Accuracy](#accuracy) section above and
+  [`ACCURACY_REPORT.md`](ACCURACY_REPORT.md).

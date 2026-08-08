@@ -1,5 +1,6 @@
 /reference/
 /reference2/
+/accuracytest/thirdparty/
 /.idea/go.imports.xml
 /.idea/go-sgp4.iml
 /.idea/modules.xml
